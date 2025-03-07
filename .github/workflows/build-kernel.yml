@@ -1,4 +1,4 @@
-name: Build PeridotKernel
+name: Build PeridotKernel! 
 
 
 on:
@@ -19,39 +19,14 @@ jobs:
           echo "KERNEL_CONFIG=$(cat config.env | grep -w "KERNEL_CONFIG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
           echo "BUILD_ARGS=$(cat config.env | grep -w "BUILD_ARGS" | head -n 1 | cut -d ":" -f 2)" >> $GITHUB_ENV
 
-  - name: Pull Toolchain
-  run: |
-    mkdir -p toolchains
-    cd toolchains
-
-    # Ensure clean download
-    rm -rf aarch64-linux-android-4.9 arm-linux-androideabi-4.9
-
-    # Download with retries
-    wget -c --retry-connrefused --waitretry=5 --timeout=30 --tries=5 \
-    https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64-aarch64-linux-android-4.9/archive/main.tar.gz -O gcc-arm.tar.gz
-
-    wget -c --retry-connrefused --waitretry=5 --timeout=30 --tries=5 \
-    https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm-arm-linux-androideabi-4.9/archive/main.tar.gz -O gcc-arm32.tar.gz
-
-    mkdir clang && curl https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-dev/clang-r487747c.tar.gz -RLO && tar -C clang/ -xf clang-*.tar.gz
-
-    # Check if files are valid
-    if ! tar -tzf gcc-arm.tar.gz >/dev/null; then
-      echo "ERROR: Toolchain archive is corrupted! Exiting..."
-      exit 1
-    fi
-
-    if ! tar -tzf gcc-arm32.tar.gz >/dev/null; then
-      echo "ERROR: Toolchain archive is corrupted! Exiting..."
-      exit 1
-    fi
-
-    # Extract
-    tar -xzf gcc-arm.tar.gz
-    tar -xzf gcc-arm32.tar.gz
-
-    echo "Toolchain successfully downloaded and extracted."
+      - name: Pull toolchain
+        run: |
+         rm -rf aarch64-linux-android-4.9 arm-linux-androideabi-4.9
+         wget -c --retry-connrefused --waitretry=5 --timeout=30 --tries=5 \
+         https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64-aarch64-linux-android-4.9/archive/main.tar.gz -O gcc-arm.tar.gz
+         wget -c --retry-connrefused --waitretry=5 --timeout=30 --tries=5 \
+         https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm-arm-linux-androideabi-4.9/archive/main.tar.gz -O gcc-arm32.tar.gz
+         mkdir clang && curl https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android14-dev/clang-r487747c.tar.gz -RLO && tar -C clang/ -xf clang-*.tar.gz
 
       - name: Pull kernel source
         run: |
