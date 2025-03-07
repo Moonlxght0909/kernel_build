@@ -21,8 +21,14 @@ jobs:
 
       - name: Pull toolchain
         run: |
-         mkdir clang && curl https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r522817.git -RLO && tar -C clang/ -xf clang-*.tar.gz -b 15.0
-
+         mkdir -p toolchains
+         cd toolchains
+         wget -O llvm.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/main.tar.gz
+         mkdir llvm
+         tar -xzf llvm.tar.gz -C llvm
+         export PATH=$(pwd)/llvm/bin:$PATH
+         cd ..
+         
       - name: Pull kernel source
         run: |
           git clone --depth=1 ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} kernel-source
